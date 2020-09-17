@@ -26,7 +26,7 @@
    <![CDATA[   select rno,bno, reply, replyer,replyDate, updatedate
    from
      (select 
-               /*+index_desc(tbl_reply pk_reply) */
+               /*+index_asc(tbl_reply pk_reply) */
          rownum rn, rno,bno, reply, replyer,replyDate, updatedate
        from tbl_reply
      where bno=#{bno}

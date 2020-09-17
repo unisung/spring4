@@ -86,7 +86,7 @@
                                         <div class="modal-footer">
                                             <button id='modalModBtn' type="button" class="btn btn-warning" >수정</button>
                                             <button id='modalRemoveBtn' type="button" class="btn btn-danger">삭제</button>
-                                            <button id='modelRegisterBtn' type="button" class="btn btn-default" >등록</button>
+                                            <button id='modalRegisterBtn' type="button" class="btn btn-default" >등록</button>
                                             <button id='modalCloseBtn' type="button" class="btn btn-primary">닫기</button>
                                         </div>
                                     </div>
@@ -268,7 +268,8 @@ function showList(page){
     	
     	modal.modal('hide');
     });
-    
+
+    //댓글 등록모달 팝업 뛰우기
     $("#addReplyBtn").on("click", function(e){
       
       modal.find("input").val("");
@@ -281,9 +282,9 @@ function showList(page){
       
     });
     
-
+  //댓글 등록 모달 팝업 창에서 댓글 입력 후 등록 버튼 누름 이벤트 처리
     modalRegisterBtn.on("click",function(e){
-      
+      //JSON 객체 생성
       var reply = {
             reply: modalInputReply.val(),
             replyer:modalInputReplyer.val(),
@@ -293,11 +294,11 @@ function showList(page){
         
         alert(result);
         
-        modal.find("input").val("");
-        modal.modal("hide");
+        modal.find("input").val("");//모달의 input태그 값 초기화
+        modal.modal("hide");//모달 숨기기
         
         //showList(1);
-        showList(-1);
+        showList(-1);//댓글 등록후 페이지 번호를 -1로 전달하여 전체 건수 및 페이징 재처리 요청.
         
       });
       
@@ -355,38 +356,39 @@ function showList(page){
   	  
   	}); */
 
-    modalModBtn.on("click", function(e){
-    	  
-   	  var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
-   	  
-   	  replyService.update(reply, function(result){
-   	        
-   	    alert(result);
-   	    modal.modal("hide");
-   	    showList(pageNum);
-   	    
-   	  });
-   	  
-   	});
+    //댓글 수정 이벤트 처리
+    modalModBtn.on("click",function(e){
+        //JSON객체 생성
+		var reply={rno:modal.data("rno"), reply:modalInputReply.val()};
 
 
-   	modalRemoveBtn.on("click", function (e){
-   	  
-   	  var rno = modal.data("rno");
-   	  
-   	  replyService.remove(rno, function(result){
-   	        
-   	      alert(result);
-   	      modal.modal("hide");
-   	      showList(pageNum);
-   	      
-   	  });
-   	  
-   	});
+        //update(객체,콜백함수) 2개만 매개변수로 넘김.
+		replyService.update(reply,function(result){
+					alert(result);
 
- 
-});
+					modal.modal("hide");//팝업창 숨기기
+					showList(pageNum);//페이징 처리 후 페이지 재생성 
+			});
 
+        });
+
+
+  	
+		//댓글 삭제 이벤트 처리
+		modalRemoveBtn.on("click",function(){
+			var rno=modal.data("rno");
+
+			//alert(rno);
+
+			replyService.remove(rno, function(result){
+				alert(result);//얼럿창 보이기
+
+				modal.modal("hide");//모달 숨기기
+				showList(pageNum);//페이지 다시 생성
+				});
+			});
+		
+});//$().ready(function(){}) 끝.
 </script>
 
 
