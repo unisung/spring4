@@ -123,228 +123,351 @@
 
 
 
-<!-- 수정/리스트 페이지로이동 처리 스크립트  -->
+<script type="text/javascript" src="/resources/js/reply.js"></script>
+
 <script>
-$(document).ready(function(){
-	 var operForm=$("#operForm");
-	 $("button[data-oper='modify']").on("click",function(e){
-			operForm.attr("action","/board/modify").submit();
-		 });
+$(document).ready(function () {
+  
+  var bnoValue = '<c:out value="${board.bno}"/>';
+  var replyUL = $(".chat");
+  
+    showList(1);
+    
+function showList(page){
+	
+	  console.log("show list " + page);
+    
+    replyService.getList({bno:bnoValue,page: page|| 1 }, function(replyCnt, list) {
+      
+    console.log("replyCnt: "+ replyCnt );
+    console.log("list: " + list);
+    console.log(list);
+    
+    if(page == -1){
+      pageNum = Math.ceil(replyCnt/10.0);
+      showList(pageNum);
+      return;
+    }
+      
+     var str="";
      
-	 $("button[data-oper='list']").on("click",function(e){
-		    operForm.find("#bno").remove();
-			operForm.attr("action","/board/list").submit();
-		 });
+     if(list == null || list.length == 0){
+       return;
+     }
+     
+     for (var i = 0, len = list.length || 0; i < len; i++) {
+       str +="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
+       str +="  <div><div class='header'><strong class='primary-font'>["
+    	   +list[i].rno+"] "+list[i].replyer+"</strong>"; 
+       str +="    <small class='pull-right text-muted'>"
+           +replyService.displayTime(list[i].replyDate)+"</small></div>";
+       str +="    <p>"+list[i].reply+"</p></div></li>";
+     }
+     
+     replyUL.html(str);
+     
+     showReplyPage(replyCnt);
+
+ 
+   });//end function
+     
+ }//end showList
+    
+    var pageNum = 1;
+    var replyPageFooter = $(".panel-footer");
+    
+    function showReplyPage(replyCnt){
+      
+      var endNum = Math.ceil(pageNum / 10.0) * 10;  
+      var startNum = endNum - 9; 
+      
+      var prev = startNum != 1;
+      var next = false;
+      
+      if(endNum * 10 >= replyCnt){
+        endNum = Math.ceil(replyCnt/10.0);
+      }
+      
+      if(endNum * 10 < replyCnt){
+        next = true;
+      }
+      
+      var str = "<ul class='pagination pull-right'>";
+      
+      if(prev){
+        str+= "<li class='page-item'><a class='page-link' href='"+(startNum -1)+"'>Previous</a></li>";
+      }
+      
+      for(var i = startNum ; i <= endNum; i++){
+        
+        var active = pageNum == i? "active":"";
+        
+        str+= "<li class='page-item "+active+" '><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+      }
+      
+      if(next){
+        str+= "<li class='page-item'><a class='page-link' href='"+(endNum + 1)+"'>Next</a></li>";
+      }
+      
+      str += "</ul></div>";
+      
+      console.log(str);
+      
+      replyPageFooter.html(str);
+    }
+     
+    replyPageFooter.on("click","li a", function(e){
+       e.preventDefault();
+       console.log("page click");
+       
+       var targetPageNum = $(this).attr("href");
+       
+       console.log("targetPageNum: " + targetPageNum);
+       
+       pageNum = targetPageNum;
+       
+       showList(pageNum);
+     });     
+
+    
+/*     function showList(page){
+      
+      replyService.getList({bno:bnoValue,page: page|| 1 }, function(list) {
+        
+        var str="";
+       if(list == null || list.length == 0){
+        
+        replyUL.html("");
+        
+        return;
+      }
+       for (var i = 0, len = list.length || 0; i < len; i++) {
+           str +="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
+           str +="  <div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>"; 
+           str +="    <small class='pull-right text-muted'>"+replyService.displayTime(list[i].replyDate)+"</small></div>";
+           str +="    <p>"+list[i].reply+"</p></div></li>";
+         }
+
+
+    replyUL.html(str);
+
+      });//end function
+      
+   }//end showList */
+   
+    var modal = $(".modal");
+    var modalInputReply = modal.find("input[name='reply']");
+    var modalInputReplyer = modal.find("input[name='replyer']");
+    var modalInputReplyDate = modal.find("input[name='replyDate']");
+    
+    var modalModBtn = $("#modalModBtn");
+    var modalRemoveBtn = $("#modalRemoveBtn");
+    var modalRegisterBtn = $("#modalRegisterBtn");
+    
+    $("#modalCloseBtn").on("click", function(e){
+    	
+    	modal.modal('hide');
+    });
+    
+    $("#addReplyBtn").on("click", function(e){
+      
+      modal.find("input").val("");
+      modalInputReplyDate.closest("div").hide();
+      modal.find("button[id !='modalCloseBtn']").hide();
+      
+      modalRegisterBtn.show();
+      
+      $(".modal").modal("show");
+      
+    });
+    
+
+    modalRegisterBtn.on("click",function(e){
+      
+      var reply = {
+            reply: modalInputReply.val(),
+            replyer:modalInputReplyer.val(),
+            bno:bnoValue
+          };
+      replyService.add(reply, function(result){
+        
+        alert(result);
+        
+        modal.find("input").val("");
+        modal.modal("hide");
+        
+        //showList(1);
+        showList(-1);
+        
+      });
+      
+    });
+
+
+  //댓글 조회 클릭 이벤트 처리 
+    $(".chat").on("click", "li", function(e){
+      
+      var rno = $(this).data("rno");
+      
+      replyService.get(rno, function(reply){
+      
+        modalInputReply.val(reply.reply);
+        modalInputReplyer.val(reply.replyer);
+        modalInputReplyDate.val(replyService.displayTime( reply.replyDate))
+        .attr("readonly","readonly");
+        modal.data("rno", reply.rno);
+        
+        modal.find("button[id !='modalCloseBtn']").hide();
+        modalModBtn.show();
+        modalRemoveBtn.show();
+        
+        $(".modal").modal("show");
+            
+      });
+    });
+  
+    
+/*     modalModBtn.on("click", function(e){
+      
+      var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
+      
+      replyService.update(reply, function(result){
+            
+        alert(result);
+        modal.modal("hide");
+        showList(1);
+        
+      });
+      
+    });
+
+    modalRemoveBtn.on("click", function (e){
+    	  
+  	  var rno = modal.data("rno");
+  	  
+  	  replyService.remove(rno, function(result){
+  	        
+  	      alert(result);
+  	      modal.modal("hide");
+  	      showList(1);
+  	      
+  	  });
+  	  
+  	}); */
+
+    modalModBtn.on("click", function(e){
+    	  
+   	  var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
+   	  
+   	  replyService.update(reply, function(result){
+   	        
+   	    alert(result);
+   	    modal.modal("hide");
+   	    showList(pageNum);
+   	    
+   	  });
+   	  
+   	});
+
+
+   	modalRemoveBtn.on("click", function (e){
+   	  
+   	  var rno = modal.data("rno");
+   	  
+   	  replyService.remove(rno, function(result){
+   	        
+   	      alert(result);
+   	      modal.modal("hide");
+   	      showList(pageNum);
+   	      
+   	  });
+   	  
+   	});
+
+ 
 });
-</script>
-<script>
 
 </script>
-<script type="text/javascript" src="/resources/js/reply.js"></script>
+
+
+
 <script>
-console.log("===============");
+
+/* console.log("===============");
 console.log("JS TEST");
 
-var bnoValue = '<c:out value="${board.bno}"/>';
+var bnoValue = '<c:out value="${board.bno}"/>'; */
 
 //for replyService add test
- replyService.add(
-  
-  {reply:"JS Test", 
-	replyer:"tester", 
-	bno:bnoValue}//객체
-  ,
-  function(result){ //함수
-    alert("RESULT: " + result);
-  }
-); 
-</script>
-<script>
-replyService.getList({bno:bnoValue,page:1},
-		                        function(list){
-	                   for(var i=0,len=list.length||0;i<len;i++){
-                                console.log(list[i]);
-		}
-});
-</script>
-<script>
- //24번 댓글 삭제
- replyService.remove(24,
-		 function(count){
-           console.log(count);
+/* replyService.add(
+    
+    {reply:"JS Test", replyer:"tester", bno:bnoValue}
+    ,
+    function(result){ 
+      alert("RESULT: " + result);
+    }
+); */
 
-     	  if(count==='success'){
-         	      alert("REMOVED");
-          }
-        },
-      function(err){
-          alert('ERROR....');
-          }
-);
-</script>
-<script>
-//43번 댓글 수정
-replyService.update(
-  {rno:26, bno:bnoValue, reply:"ajax로 댓글 수정...."},
-  function(result){
-	  alert("수정완료....");
+
+//reply List Test
+/* replyService.getList({bno:bnoValue, page:1}, function(list){
+    
+	  for(var i = 0,  len = list.length||0; i < len; i++ ){
+	    console.log(list[i]);
 	  }
-);
-</script>
-<script>
-replyService.get(26,function(data){
-	   console.log(data);
 });
+ */
 
-</script>
-<script>
-var replyUL =$(".chat");//class="chat"
+ 
+/*  //17번 댓글 삭제 테스트 
+ replyService.remove(17, function(count) {
 
-showList(1);
+   console.log(count);
 
-function showList(page){
-	 console.log("show list "+page);
+   if (count === "success") {
+     alert("REMOVED");
+   }
+ }, function(err) {
+   alert('ERROR...');
+ });
+ */
+ 
 
-	 replyService.getList({bno:bnoValue,page:page||1},
-            function(replyCnt, list){
-				console.log("replyCnt: "+replyCnt);
-				console.log("list: "+list);
-				console.log(list);
+//12번 댓글 수정 
+/* replyService.update({
+  rno : 12,
+  bno : bnoValue,
+  reply : "Modified Reply...."
+}, function(result) {
 
-                //페이지 번호가 -1로 전달되면 전체 댓글수 재계산후, showList()재호출
-				if(page==-1){
-                     pageNum=Math.ceil(replyCnt/10.0);
-                     showList(pageNum);
-                     return;
-					}
+  alert("수정 완료...");
 
-				var str="";
+});  
+ */
 
-				//결과가 없을 때 리턴
-				if(list==null || list.length==0){
-                     return;
-					}
-                 //댓글 리스트가 있으면
-           for(var i=0,len=list.length||0; i<len; i++){
-                 str+="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
-                 str+=" <div><div class='header'><strong class='primary-font'>["
-                        +list[i].rno+"]"+list[i].replyer+"</strong>";
-                 str+=" <small class='pull-right text-muted'>"
-                         +replyService.displayTime(list[i].replyDate) +"</small></div>";
-                 str+=" <p>"+list[i].reply+"</p></div></li>";
-               }
-
-               //ul에 추가하기
-           replyUL.html(str);//InnerHTML(element)
-           
-           showReplyPage(replyCnt);
-	 }         
-     
-			 );
-}
-</script>
-<script>
-var pageNum=1;
-var replyPageFooter=$(".panel-footer");//class="panel-footer"
-function showReplyPage(replyCnt){
-        
-	   //끝번호
-	var endNum=Math.ceil(pageNum/10.0) *10;
-	//시작번호
-	var startNum=endNum-9;
-   //이전페이지
-	var prev=startNum !=1;
-	//다음페이지 여부
-	var next=false;
-
-	console.log(endNum, startNum, prev,next);
-
-	//페이지 조정
-	if(endNum*10 >=replyCnt){
-        endNum=Math.ceil(replyCnt/10.0);
-	}
-
-	//다음페이지  true로
-	if(endNum *10 <replyCnt){
-        next=true;
-		}
-
-	var str="<ul class='pagination pull-right'>";
-
-	if(prev){
-		  str+="<li class='page-item'><a class='page-link' href='"
-			    +(startNum-1)+"'>이전페이지</a></li>";
-		}
-
-    for(var i=startNum; i<=endNum;i++){
-          var active = pageNum==i?"active":"";
-
-          str+="<li class='page-item " +active+"'><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+</script>  
 
 
-        }
-
-	
-	if(next){
-		str+="<li class='page-item'><a class='page-link' href='"
-			   +(entNum+1)+"'>다음페이지</a></li>";
-		}
-
-	str +="</ul></div>";
-
-	console.log(str);
-
-	replyPageFooter.html(str);//innerHTML(str);
-	
-}
-
-//이벤트 위임-부모요소에 이벤트 리스너 등록 - 동적생성된 자식요소에 이벤트 처리 
-replyPageFooter.on("click","li a",function(e){
-	e.preventDefault();//기본동작 정지
-	console.log("page click");
-
-	var targetPageNum=$(this).attr("href");//this <- li a요소
-
-	console.log("targetPageNum: "+targetPageNum);
-
-	pageNum=targetPageNum;
-
-	showList(pageNum);
-	
+<script type="text/javascript">
+$(document).ready(function() {
+  
+  var operForm = $("#operForm"); 
+  
+  $("button[data-oper='modify']").on("click", function(e){
+    
+    operForm.attr("action","/board/modify").submit();
+    
+  });
+  
+    
+  $("button[data-oper='list']").on("click", function(e){
+    
+    operForm.find("#bno").remove();
+    operForm.attr("action","/board/list")
+    operForm.submit();
+    
+  });  
 });
-</script>
-<script>
-//모달 객체 얻기
-var modal=$(".modal");
-//모달 input태그 얻기
-var modalInputReply=modal.find("input[name='reply']");
-var modalInputReplyer=modal.find("input[name='replyer']");
-var modalInputRepyDate=modal.find("input[name='replyDate']");
-
-//모달내 버튼 객체 얻기
-var modalModBtn=$('#modalModBtn');
-var modalRemoveBtn=$('#modalRemoveBtn');
-var modalRegisterBtn=$('#modelRegisterBtn');
-
-
-$(".chat").on("click","li",function(e){
-   var rno=$(this).data("rno");// this-> 클릭한 li,   data-* 글로벌 속성, data-rno,data-변수명, 값얻기 data(변수명)
-
-   replyService.get(rno,function(reply){
-	   modalInputReply.val(reply.reply);// 객체.val()- 값 얻기, 객체.val(값) -값 세팅,
-	   modalInputReply.val(reply.replyer);
-	   modalInputRepyDate.val(replyService.displayTime(reply.replyDate)).attr("readonly","readonly");
-	   modal.data("rno",reply.rno);
-
-	   modal.find("button[id!='modalCloseBtn']").hide();//닫기 버튼만 보여줌
-	   modalModBtn.show();
-	   modalRemoveBtn.show();
-
-	   $(".modal").modal("show");
-	   
-	   });
-});
-
 </script>
 
 <%@ include file="../includes/footer.jsp"%>
