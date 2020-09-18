@@ -25,5 +25,5 @@ public interface BoardService {
  
   //글 전체 건수 조회
   public int getTotal(Criteria cri);
-  
+
 }

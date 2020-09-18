@@ -29,6 +29,7 @@
 							<th>#번호</th>
 							<th>제목</th>
 							<th>작성자</th>
+							<th>조회수</th>
 							<th>작성일</th>
 							<th>수정일</th>
 						</tr>
@@ -39,9 +40,11 @@
 							<td><c:out value="${board.bno}" /></td>
 							<%--<td><a href='/board/get?bno=<c:out value="${board.bno}"/>'><c:out value="${board.title}"/></a></td>--%>
                              <%-- 자바스크립트로 get으로 이동 --%>
-							<td><a class='move' href='<c:out value="${board.bno}"/>'>	<c:out value="${board.title}" /></a></td>
+							<td><a class='move' href='<c:out value="${board.bno}"/>'>	<c:out value="${board.title}" />
+							<b>[<c:out value="${board.replyCnt}"></c:out>]</b></a></td>
 
 							<td><c:out value="${board.writer}" /></td>
+							<td><c:out value="${board.readCount}"/></td>
 							<td><fmt:formatDate pattern="yyyy-MM-dd"
 									value="${board.regdate}" /></td>
 							<td><fmt:formatDate pattern="yyyy-MM-dd"

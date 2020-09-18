@@ -359,7 +359,7 @@ function showList(page){
     //댓글 수정 이벤트 처리
     modalModBtn.on("click",function(e){
         //JSON객체 생성
-		var reply={rno:modal.data("rno"), reply:modalInputReply.val()};
+		var reply={rno:modal.data("rno"), reply:modalInputReply.val(), bno:bnoValue};
 
 
         //update(객체,콜백함수) 2개만 매개변수로 넘김.

@@ -44,7 +44,9 @@ public class ReplyServiceImpl implements ReplyService {
 	public int delete(Long rno) {
 		log.info("delete...."+rno);
 		
-		
+		ReplyVO vo = read(rno);
+		//댓글 갯수 감소 트랜잭션
+		boardMapper.updateReplyCnt(vo.getBno(), -1);
 		return mapper.delete(rno);
 	}
 
@@ -53,8 +55,6 @@ public class ReplyServiceImpl implements ReplyService {
 	public int update(ReplyVO vo) {
 		log.info("update...."+vo);
 		
-		//댓글 갯수 감소 트랜잭션
-		boardMapper.updateReplyCnt(vo.getBno(), -1);
 		return mapper.update(vo);
 	}
 

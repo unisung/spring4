@@ -3,6 +3,7 @@ package org.zerock.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.Criteria;
 import org.zerock.mapper.BoardMapper;
@@ -28,10 +29,12 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	//글 내용 보기
+	//@Transactional
 	@Override
 	public BoardVO get(Long bno) {
 		log.info("get....." +bno);
-
+		
+         mapper.updateReadCount(bno);
 		//매퍼 메소드 호출 및 값 리턴
 		return mapper.read(bno);
 	}

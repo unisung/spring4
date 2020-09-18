@@ -35,4 +35,7 @@ public interface BoardMapper {
 	
 	//댓글 갯수 수정
 	public void updateReplyCnt(@Param("bno") Long bno, @Param("amount") int amount);
+
+	//조회 건수 증가
+	public void updateReadCount(Long bno);
 }
