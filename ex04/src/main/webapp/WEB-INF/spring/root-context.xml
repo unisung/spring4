@@ -17,6 +17,28 @@
 		<context:component-scan base-package="org.zerock.service"/>
 		<context:component-scan base-package="org.zerock.aop"/>
 		
+		<!-- hicariCP설정  log4jdbc.log4j2.properties /resources에 추가 -->
+		<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
+		<property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:xe"></property>
+		<property name="username" value="book_ex"></property>
+		<property name="password" value="book_ex"></property>
+		</bean>
+		
+		<!-- dataSource 설정 -->
+		<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig"></constructor-arg>
+		</bean>
+		
+		<!-- sqlSessionFactory 설정 -->
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		  <property name="dataSource" ref="dataSource"></property>
+		</bean>
+		
+		<!-- 매퍼경로 설정 -->
+		<mybatis-spring:scan base-package="org.zerock.mapper"/>
+		
 		
 		<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 </beans>

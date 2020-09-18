@@ -1,5 +1,6 @@
 package org.zerock.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class SampleServiceTests {
 	@Setter(onMethod_=@Autowired)
 	private SampleService service;
 	
+	
+	@Ignore
 	@Test
 	public void testClass() {
 		
@@ -24,5 +27,12 @@ public class SampleServiceTests {
 		log.info(service.getClass().getName());
 		
 	}
+	
+	@Test
+	public void testAdd() throws Exception{
+		log.info(service.doAdd("123", "456"));
+	}
+	
+	
 
 }

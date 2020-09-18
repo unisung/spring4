@@ -1,5 +1,9 @@
 package org.zerock.aop;
 
+import java.util.Arrays;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -16,4 +20,33 @@ public class LogAdvice {
 			log.info("=====================");
 			
 		}
+	   
+	   @Before("execution(* org.zerock.service.SampleService*.doAdd(String,String)) && args(str1,str2)")
+	   public void logBeforeWithParam(String str1, String str2) {
+		   log.info("str1:"+str1);
+		   log.info("str2:"+str2);
+	   }
+	   
+	   @Around("execution(* org.zerock.service.SampleService*.*(..))")
+	   public Object logTime(ProceedingJoinPoint pjp) {
+		   long start = System.currentTimeMillis();
+		   
+		   log.info("Target: "+ pjp.getTarget());
+		   log.info("param:"+ Arrays.toString(pjp.getArgs()));
+		   
+		   //invoke method
+		   Object result=null;
+		   
+		   try {
+			     result=pjp.proceed();
+		   }catch(Throwable e) {
+			   e.printStackTrace();
+		   }
+		   
+		   long end = System.currentTimeMillis();
+		   
+		   log.info("Time: "+(end - start));
+		   
+		   return result; 
+	   }
 }
