@@ -39,6 +39,6 @@
 		<!-- 매퍼경로 설정 -->
 		<mybatis-spring:scan base-package="org.zerock.mapper"/>
 		
-		
+		<tx:annotation-driven/>
 		<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 </beans>
