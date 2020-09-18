@@ -38,4 +38,9 @@ public interface BoardMapper {
 
 	//조회 건수 증가
 	public void updateReadCount(Long bno);
+
+	//좋아요
+	public int updateGoodCount(Long bno);
+    //싫어요
+	public int updateBadCount(Long bno);
 }

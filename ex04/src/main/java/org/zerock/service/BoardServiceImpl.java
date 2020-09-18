@@ -78,6 +78,18 @@ public class BoardServiceImpl implements BoardService{
 		return mapper.getTotalCount(cri);
 	}
 
+	@Override
+	public int updateGoodCount(Long bno) {
+		log.info("good count update...");
+		return mapper.updateGoodCount(bno);
+	}
+
+	@Override
+	public int updateBadCount(Long bno) {
+		log.info("bad count update...");
+		return mapper.updateBadCount(bno);
+	}
+
 	
 
 

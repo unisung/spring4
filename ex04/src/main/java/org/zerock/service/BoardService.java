@@ -26,4 +26,9 @@ public interface BoardService {
   //글 전체 건수 조회
   public int getTotal(Criteria cri);
 
+  //좋아요 건수 증가
+  public int updateGoodCount(Long bno);
+  
+  //싫어요 건수 증가
+  public int updateBadCount(Long bno);
 }

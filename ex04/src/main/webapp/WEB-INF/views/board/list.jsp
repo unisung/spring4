@@ -30,6 +30,7 @@
 							<th>제목</th>
 							<th>작성자</th>
 							<th>조회수</th>
+							<th>좋아요/싫어요</th>
 							<th>작성일</th>
 							<th>수정일</th>
 						</tr>
@@ -45,6 +46,14 @@
 
 							<td><c:out value="${board.writer}" /></td>
 							<td><c:out value="${board.readCount}"/></td>
+							<td>
+                             <button class="btn btn-danger btn-circle"  onclick="updateGoodCnt(this)" data-bno='<c:out value="${board.bno }"/>'>
+                                <i class="fa fa-heart"><c:out value="${board.good }"/></i>
+                              </button>
+                              <button class="btn btn-warning btn-circle" onclick="updateBadCnt(this)"  data-bno='<c:out value="${board.bno }"/>'>
+                                <i class="fa fa-times"><c:out value="${board.bad }"/></i>
+                               </button>
+						   </td>
 							<td><fmt:formatDate pattern="yyyy-MM-dd"
 									value="${board.regdate}" /></td>
 							<td><fmt:formatDate pattern="yyyy-MM-dd"
@@ -247,10 +256,52 @@
 
 									searchForm.submit();
 								});
+/* 
+              $('#goodBtn').on("click",function(e){
+            	  var bno = $(this).data("bno");
+                   alert(bno);
+                  });
+                   */			
 					});
 </script>
-
-
+<script>
+function updateGoodCnt(obj){
+	var x=$(obj);
+	var bno=$(obj).data("bno");
+	    
+		$.ajax({
+	        type:'put',
+	        url:'/board/good/'+bno+".json",
+	        data:JSON.stringify(bno),
+	        contentType:'application/json; charset=utf-8',
+	        success:function(result, status, xhr){
+	               x.html('<i class="fa fa-heart">'+result.good+'</i>');
+	            },
+	        error:function(xhr, status, er){
+	        	 alert(status);
+	            }
+			});
+}
+</script>
+<script>
+function updateBadCnt(obj){
+	var x=$(obj);
+	var bno=$(obj).data("bno");
+	    
+		$.ajax({
+	        type:'put',
+	        url:'/board/bad/'+bno+".json",
+	        data:JSON.stringify(bno),
+	        contentType:'application/json; charset=utf-8',
+	        success:function(result, status, xhr){
+	               x.html('<i class="fa fa-times">'+result.bad+'</i>');
+	            },
+	        error:function(xhr, status, er){
+	             alert(status);
+	            }
+			});
+}
+</script>
 
 
 

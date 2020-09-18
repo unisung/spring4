@@ -16,4 +16,7 @@ public class BoardVO {
  private int replyCnt;
  
  private int readCount;
+ 
+ private int good;
+ private int bad;
 }

@@ -50,11 +50,11 @@
   
   <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
   <![CDATA[
-       select bno, title, content, writer, regdate,updateDate,replycnt,readcount
+       select bno, title, content, writer, regdate,updateDate,replycnt,readcount, good,bad
         from
       (
   		 select /*+index_desc(tbl_board pk_board) */ 
-  		          rownum rn, bno, title, content, writer, regdate,updateDate,replycnt,readcount
+  		          rownum rn, bno, title, content, writer, regdate,updateDate,replycnt,readcount,good,bad
   		  from tbl_board
   		where 
   		]]>
@@ -126,5 +126,12 @@
        update tbl_board set readcount=readcount+1 where bno=#{bno}
   </update>
   
+  <!-- 좋아요/싫어요 증가 -->
+  <update id="updateGoodCount">
+  	  update tbl_board set good = good+1 where bno=#{bno}
+  </update>
   
+  <update id="updateBadCount">
+  	  update tbl_board set bad = bad+1 where bno=#{bno}
+  </update>
   </mapper>
