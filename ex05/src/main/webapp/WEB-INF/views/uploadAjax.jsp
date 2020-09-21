@@ -141,6 +141,8 @@ $(document).ready(function(){
  				});
 });
 
+});
+
  		    var uploadResult = $('.uploadResult ul');
 
  		   function showUploadedFile(uploadResultArr){
@@ -149,14 +151,31 @@ $(document).ready(function(){
 						if(!obj.image){//false  이미지가 아니면
 								str+="<li><img src='/resources/img/attach.png'>"+obj.fileName+"</li>";
 							}else{
-						       str+="<li>" + obj.fileName+"</li>";
+
+                            var fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+                            var originPath = obj.upLoadPath +"\\"+obj.uuid+"_"+obj.fileName;
+                            
+                            originPath = originPath.replace(new RegExp(/\\/g),"/");
+                            fileCallPath=fileCallPath.replace(new RegExp(/\\/g),"/");
+                            
+                            console.log(fileCallPath);
+                            str+="<li><a href=\"javascript:showImage(\'"+originPath+"\')\">"+
+                                     "<img src='display?fileName="+fileCallPath+"'></a>"+
+                                     "<span data-file=\' "+fileCallPath+"\' data-type='image'>x</span>"+
+                                     "</li>";						       
 							}
 					});
                   uploadResult.append(str);
  	 		   }
-});
+
 </script>	
 	
-
+<script>
+function showImage(fileCallPath){
+  $(".bigPictureWrapper").css("display","flex").show();
+  $(".bigPicture").html("<img src='/display?fileName="+fileCallPath+"'>").animate({width:'100%',height:'100'},1000);
+	
+}
+</script>
 </body>
 </html>

@@ -2,6 +2,8 @@ package org.zerock.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -122,9 +124,10 @@ public class UploadController {
    }
    
    @GetMapping("/display")
-   public ResponseEntity<byte[]> getFile(String fileName){
+   public ResponseEntity<byte[]> getFile(String fileName) throws UnsupportedEncodingException{
 	   log.info("fileName: " + fileName);
 	   
+	   log.info(URLDecoder.decode(fileName,"UTF-8"));
 	   File file = new File("c:\\upload\\"+fileName);
 	   
 	   log.info("file: " + file);
