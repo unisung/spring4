@@ -133,10 +133,23 @@ $(document).ready(function(){
  	          success:function(result){
  					//alert('Uploaded');
 					console.log(result);
+
+					showUploadedFile(result);
+
+					$(".uploadDiv").html(cloneObj.html());
  	              }
  				});
 });
 
+ 		    var uploadResult = $('.uploadResult ul');
+
+ 		   function showUploadedFile(uploadResultArr){
+				var str="";
+				$(uploadResultArr).each(function(i,obj){
+						str+="<li>" + obj.fileName+"</li>";
+					});
+                  uploadResult.append(str);
+ 	 		   }
 });
 </script>	
 	
