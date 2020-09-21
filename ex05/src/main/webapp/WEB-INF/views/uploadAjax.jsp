@@ -146,7 +146,11 @@ $(document).ready(function(){
  		   function showUploadedFile(uploadResultArr){
 				var str="";
 				$(uploadResultArr).each(function(i,obj){
-						str+="<li>" + obj.fileName+"</li>";
+						if(!obj.image){//false  이미지가 아니면
+								str+="<li><img src='/resources/img/attach.png'>"+obj.fileName+"</li>";
+							}else{
+						       str+="<li>" + obj.fileName+"</li>";
+							}
 					});
                   uploadResult.append(str);
  	 		   }
