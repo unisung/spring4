@@ -1,6 +1,9 @@
 package org.zerock.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,6 +53,10 @@ public class UploadController {
 	   log.info("upload ajax post.......");
 	   
 	   String uploadFolder ="c:\\upload";
+	// make folder --------
+	    File uploadPath = new File(uploadFolder, getFolder());
+	    log.info("upload path: " + uploadPath);
+
 	   
 	   for(MultipartFile multipartFile : uploadFile) {
 		   
@@ -57,14 +64,35 @@ public class UploadController {
 		     log.info("Upload File Name: "+multipartFile.getOriginalFilename());
 		     log.info("Upload File Size: "+ multipartFile.getSize());
 		     
-		     File saveFile = new File(uploadFolder, multipartFile.getOriginalFilename());
+		     UUID uuid =UUID.randomUUID();
+		     log.info(uuid);
+		     
+		     String upLoadFileName=uuid.toString()+"_"+multipartFile.getOriginalFilename();
+		     
+		     
+		     File saveFile = new File(uploadPath, upLoadFileName);
+		     
+		     log.info(saveFile.getAbsolutePath());
 		     try {
+		    	   //파일 저장경로 없을 시 경로 생성 후 저장 
+		    	    if(!uploadPath.exists()) uploadPath.mkdirs();
 		    	   multipartFile.transferTo(saveFile);
 		     }catch(Exception e) {
 		    	 log.error(e.getMessage());
 		     }
 	   }
 	   
+   }
+   
+   private String getFolder() {
+	   
+	   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	   
+	   Date date = new Date();
+	   
+	   String str = sdf.format(date);
+	   
+	   return str.replace("-", File.separator);
    }
 
 }

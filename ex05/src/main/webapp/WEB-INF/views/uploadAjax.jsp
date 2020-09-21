@@ -70,7 +70,7 @@
 
 <script>
 $(document).ready(function(){
-$('#uploadBtn').on("click",function(e){
+/*$('#uploadBtn').on("click",function(e){
 		var formData = new FormData();
 
 		var inputFile=$("input[name='uploadFile']");
@@ -93,7 +93,7 @@ $('#uploadBtn').on("click",function(e){
 				alert('Uploaded');
               }
 			});
-})
+}) */
 
          var regEx = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
          var maxSize = 5242880; //5MB
@@ -110,9 +110,33 @@ $('#uploadBtn').on("click",function(e){
 				return true;
              }
 
+         var cloneObj = $(".uploadDiv").clone();
 
+ 		$("#uploadBtn").on("click", function(e) {
+ 			var formData = new FormData();
+ 			var inputFile = $("input[name='uploadFile']");
+ 			var files = inputFile[0].files;
+ 			//console.log(files);
+ 			for (var i = 0; i < files.length; i++) {
+ 				if (!checkExtension(files[i].name, files[i].size)) {
+ 					return false;
+ 				}
+ 				formData.append("uploadFile", files[i]);
+ 			}
+ 			//ajax처리
+ 			$.ajax({
+ 	          url:'/uploadAjaxAction',
+ 	          processData:false,
+ 	          contentType:false,
+ 	          data:formData,
+ 	          type:'POST',
+ 	          success:function(result){
+ 					alert('Uploaded');
+ 	              }
+ 				});
 });
 
+});
 </script>	
 	
 
