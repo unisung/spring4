@@ -150,8 +150,9 @@ public class BoardController {
     public ResponseEntity<BoardVO> good(@PathVariable("bno") Long bno){
     	log.info(bno);
     	
+    	//좋아요 카운트 증가 처리 
     	service.updateGoodCount(bno);
- 		return	   new ResponseEntity<BoardVO>(service.get(bno),HttpStatus.OK);
+ 		return	   new ResponseEntity<BoardVO>(service.getGoodBadCnt(bno),HttpStatus.OK);//변경된 내용 다시 view로 전달
     }
 	
     //싫어요
@@ -161,6 +162,6 @@ public class BoardController {
     	log.info(bno);
     	
     	service.updateBadCount(bno);
- 		return	   new ResponseEntity<BoardVO>(service.get(bno),HttpStatus.OK);
+ 		return	   new ResponseEntity<BoardVO>(service.getGoodBadCnt(bno),HttpStatus.OK);
     }
 }

@@ -31,4 +31,7 @@ public interface BoardService {
   
   //싫어요 건수 증가
   public int updateBadCount(Long bno);
+
+  //좋아요/싫어요 증가후 변경된 내용 가져오기 
+  public BoardVO getGoodBadCnt(Long bno);
 }

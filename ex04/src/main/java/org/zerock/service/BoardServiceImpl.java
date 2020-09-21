@@ -29,7 +29,7 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	//글 내용 보기
-	//@Transactional
+	@Transactional
 	@Override
 	public BoardVO get(Long bno) {
 		log.info("get....." +bno);
@@ -88,6 +88,13 @@ public class BoardServiceImpl implements BoardService{
 	public int updateBadCount(Long bno) {
 		log.info("bad count update...");
 		return mapper.updateBadCount(bno);
+	}
+
+	@Override
+	public BoardVO getGoodBadCnt(Long bno) {
+		log.info("getGoodBadCnt...");
+		//매퍼 메소드 호출 및 값 리턴
+		return mapper.read(bno);
 	}
 
 	

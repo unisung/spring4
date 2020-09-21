@@ -268,7 +268,6 @@
 function updateGoodCnt(obj){
 	var x=$(obj);
 	var bno=$(obj).data("bno");
-	    
 		$.ajax({
 	        type:'put',
 	        url:'/board/good/'+bno+".json",
@@ -277,17 +276,13 @@ function updateGoodCnt(obj){
 	        success:function(result, status, xhr){
 	               x.html('<i class="fa fa-heart">'+result.good+'</i>');
 	            },
-	        error:function(xhr, status, er){
-	        	 alert(status);
-	            }
+	        error:function(xhr, status, er){  	 alert(status); }
 			});
 }
-</script>
-<script>
+
 function updateBadCnt(obj){
 	var x=$(obj);
 	var bno=$(obj).data("bno");
-	    
 		$.ajax({
 	        type:'put',
 	        url:'/board/bad/'+bno+".json",
@@ -296,9 +291,7 @@ function updateBadCnt(obj){
 	        success:function(result, status, xhr){
 	               x.html('<i class="fa fa-times">'+result.bad+'</i>');
 	            },
-	        error:function(xhr, status, er){
-	             alert(status);
-	            }
+	        error:function(xhr, status, er){    alert(status); }
 			});
 }
 </script>
