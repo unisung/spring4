@@ -184,7 +184,7 @@
 
 
 
-
+<!-- element에 이벤트 리스너 등록 방법, $(doument).ready(function(){}); -->
 <script type="text/javascript">
 	$(document)	.ready(	function() {
 
