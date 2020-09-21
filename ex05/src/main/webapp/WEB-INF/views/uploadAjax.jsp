@@ -131,7 +131,8 @@ $(document).ready(function(){
  	          data:formData,
  	          type:'POST',
  	          success:function(result){
- 					alert('Uploaded');
+ 					//alert('Uploaded');
+					console.log(result);
  	              }
  				});
 });
